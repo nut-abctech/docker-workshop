@@ -10,6 +10,23 @@ from api.models.model_author import Author, AuthorSchema
 route_path = Blueprint("route_path", __name__)
 
 
+@route_path.route('/status', methods=['GET'])
+def status():
+    """
+    k8s readyness (stop sending traffic)
+    TODO: check db connection success
+    """
+    return response_with(resp.SUCCESS_200, value={'status': 'ready'})
+
+
+@route_path.route('/health', methods=['GET'])
+def health():
+    """
+    k8s liveness (kill container)
+    """
+    return response_with(resp.SUCCESS_200, value={'status': 'healty'})
+
+
 @route_path.route('/v1.0/authors', methods=['POST'])
 def create_author():
     """
