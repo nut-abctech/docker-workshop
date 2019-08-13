@@ -22,7 +22,7 @@ def status():
 @route_path.route('/health', methods=['GET'])
 def health():
     """
-    k8s liveness (kill container)
+    k8s liveness (kill container)s
     """
     return response_with(resp.SUCCESS_200, value={'status': 'healty'})
 
