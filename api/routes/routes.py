@@ -19,12 +19,29 @@ def status():
     return response_with(resp.SUCCESS_200, value={'status': 'ready'})
 
 
-@route_path.route('/health', methods=['GET'])
+@route_path.route('/bad-status', methods=['GET'])
+def badstatus():
+    """
+    k8s readyness (stop sending traffic)
+    TODO: check db connection success
+    """
+    return response_with(resp.BAD_REQUEST_400, value={'status': 'waiting for db connection'})
+
+
+@route_path.route('/healthz', methods=['GET'])
 def health():
     """
     k8s liveness (kill container)s
     """
     return response_with(resp.SUCCESS_200, value={'status': 'healty'})
+
+
+@route_path.route('/unhealthz', methods=['GET'])
+def unhealth():
+    """
+    k8s liveness (kill container)s
+    """
+    return response_with(resp.SERVER_ERROR_500, value={'status': 'RIP'})
 
 
 @route_path.route('/v1.0/authors', methods=['POST'])
@@ -100,7 +117,7 @@ def create_author():
     try:
         data = request.get_json()
         author_schema = AuthorSchema()
-        author, error = author_schema.load(data)
+        author, _ = author_schema.load(data)
         result = author_schema.dump(author.create()).data
         return response_with(resp.SUCCESS_200, value={"author": result})
     except Exception:

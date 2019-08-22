@@ -12,6 +12,5 @@ WORKDIR /workshop-app
 ADD run.py .
 
 EXPOSE 5000
-# ENTRYPOINT ["python3.6", "run.py"]
 
 CMD ["python3.6", "run.py"]

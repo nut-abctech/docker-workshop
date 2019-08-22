@@ -1,0 +1,59 @@
+kind: Deployment
+apiVersion: extensions/v1beta1
+metadata:
+  name: demo-api-deployment
+spec:
+  # A deployment's specification really only 
+  # has a few useful options
+  
+  # 1. How many copies of each pod do we want?
+  replicas: 3
+
+  # 2. How do want to update the pods?
+  # https://www.weave.works/blog/kubernetes-deployment-strategies
+  strategy:
+    type: Recreate
+
+  # 3. Which pods are managed by this deployment?(Optional)
+  selector:
+    # This must match the labels we set on the pod!
+    matchLabels:
+      app: workshop-api
+  
+  # This template field is a regular pod configuration 
+  # nested inside the deployment spec
+  template:
+    metadata:
+      # Set labels on the pod.
+      # This is used in the deployment selector.
+      labels:
+        app: workshop-api
+    spec:
+      containers:
+        - name: api
+          image: 941139257259.dkr.ecr.ap-southeast-1.amazonaws.com/docker-workshop:probes
+          env:
+          - name: WORK_ENV
+            value: PROD
+          - name: DB_HOST
+            value: postgres.db
+          - name: DB_USER
+            value: mydb
+          - name: DB_PASSWORD
+            value: super_secret_password
+          ports:
+            - name: http
+              containerPort: 5000
+          redinessProbe:
+            httpGet:
+              path: /api/status #/api/bad-status
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /api/healthz #/api/unhealthz
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          #https://cloud.google.com/blog/products/gcp/kubernetes-best-practices-setting-up-health-checks-with-readiness-and-liveness-probes
