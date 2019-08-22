@@ -31,7 +31,7 @@ spec:
     spec:
       containers:
         - name: api
-          image: 941139257259.dkr.ecr.ap-southeast-1.amazonaws.com/docker-workshop:probes
+          image: 941139257259.dkr.ecr.ap-southeast-1.amazonaws.com/docker-workshop:healthz-liveness
           env:
           - name: WORK_ENV
             value: PROD
@@ -51,7 +51,7 @@ spec:
           ports:
             - name: http
               containerPort: 5000
-          redinessProbe:
+          readinessProbe:
             httpGet:
               path: /api/status #/api/bad-status
               port: http
